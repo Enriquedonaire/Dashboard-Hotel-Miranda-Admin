@@ -1,0 +1,107 @@
+[
+    {
+        "id": "9f073bc2-0274-4f10-bd36-4eef756ef1ae",
+        "image": "https://i.pravatar.cc/150?img=70",
+        "full_name": "Dean Daniel",
+        "order_date": "11/09/2021",
+        "check_in": "01/01/2022",
+        "check_out": "07/01/2022",
+        "special_request": "Confirmed booking",
+        "room_info": {
+            "number": 0,
+            "type": "Double"
+        },
+        "price": "895,86 €",
+        "state": "Check In"
+    },
+    {
+        "id": "b12151f8-98bf-45d1-8976-3f45c649b4c4",
+        "image": "https://i.pravatar.cc/150?img=65",
+        "full_name": "Glen Reinger",
+        "order_date": "18/05/2021",
+        "check_in": "03/01/2022",
+        "check_out": "08/01/2022",
+        "special_request": "Confirmed booking",
+        "room_info": {
+            "number": 1,
+            "type": "Single"
+        },
+        "price": "878,44 €",
+        "state": "Check In"
+    },
+    {
+        "id": "6439ab52-fe25-4192-bb0c-aee04c5ab549",
+        "image": "https://i.pravatar.cc/150?img=32",
+        "full_name": "Patty Rohan",
+        "order_date": "10/03/2021",
+        "check_in": "04/01/2022",
+        "check_out": "14/01/2022",
+        "special_request": "In confirmation of payment!",
+        "room_info": {
+            "number": 2,
+            "type": "Single"
+        },
+        "price": "879,70 €",
+        "state": "In Progress"
+    },
+    {
+        "id": "71c5ec92-45c0-464f-8927-9a2866af4431",
+        "image": "https://i.pravatar.cc/150?img=31",
+        "full_name": "Nathaniel Mohr",
+        "order_date": "08/09/2021",
+        "check_in": "11/01/2022",
+        "check_out": "20/01/2022",
+        "special_request": "Confirmed booking",
+        "room_info": {
+            "number": 3,
+            "type": "Double Superior"
+        },
+        "price": "809,27 €",
+        "state": "Check In"
+    },
+    {
+        "id": "e2a09791-c0ab-4542-af5e-b3b9d4c3642e",
+        "image": "https://i.pravatar.cc/150?img=47",
+        "full_name": "Cecilia Strosin",
+        "order_date": "21/08/2021",
+        "check_in": "12/01/2022",
+        "check_out": "21/01/2022",
+        "special_request": "Check out Confirmed",
+        "room_info": {
+            "number": 4,
+            "type": "Double Superior"
+        },
+        "price": "452,40 €",
+        "state": "Check Out"
+    },
+    {
+        "id": "b58c99c6-839f-4ea4-89a8-5500b62badb6",
+        "image": "https://i.pravatar.cc/150?img=15",
+        "full_name": "Pat Spencer",
+        "order_date": "22/12/2020",
+        "check_in": "17/01/2022",
+        "check_out": "27/01/2022",
+        "special_request": "Check out Confirmed",
+        "room_info": {
+            "number": 5,
+            "type": "Suite"
+        },
+        "price": "651,43 €",
+        "state": "Check Out"
+    },
+    {
+        "id": "f0ac63e7-1a67-46b5-b76d-476f774bbeda",
+        "image": "https://i.pravatar.cc/150?img=42",
+        "full_name": "Sabrina Keeling",
+        "order_date": "14/02/2021",
+        "check_in": "21/01/2022",
+        "check_out": "30/01/2022",
+        "special_request":"Confirmed Booking",
+        "room_info": {
+            "number": 6,
+            "type": "Double"
+        },
+        "price": "281,99 €",
+        "state": "Check In"
+    }
+]
