@@ -3,5 +3,5 @@
 
 #TECNOLOGIES:
 - React
-- Material-UI
 - Styled-Components
+- Figma
