@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { LogContainer, LoginWrap, Input, Button, ContainerLogo, Logo, M, Label, Form, ContainerIcon, Icon, P } from "./LoginStyled";
-import { FaUserCircle } from "react-icons/fa";
-import { RiLockPasswordFill } from "react-icons/ri";
+import { FaUserAstronaut } from "react-icons/fa";
+import { RiLockPasswordLine } from "react-icons/ri";
 import logo from '../../assets/img/logo2.png'
 
 
@@ -50,12 +50,12 @@ const Login = (props) => {
                 <Form onSubmit={handleSubmit}>
                     <Label>User</Label>
                     <ContainerIcon>
-                    <Icon><FaUserCircle /></Icon>
+                    <Icon><FaUserAstronaut /></Icon>
                     <Input type="text" name="email" defaultValue={User.email}/>
                     </ContainerIcon>
                     <Label>Password</Label>
                     <ContainerIcon>
-                    <Icon><RiLockPasswordFill /></Icon>
+                    <Icon><RiLockPasswordLine /></Icon>
                     <Input type="password" name="password" defaultValue={User.password}/>
                     </ContainerIcon>
                     <Button type="submit">SignIn</Button>

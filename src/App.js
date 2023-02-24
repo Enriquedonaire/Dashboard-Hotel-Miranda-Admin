@@ -1,53 +1,44 @@
 import "./App.css";
-import React from "react";
+import React, { useReducer } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Navigate, Outlet } from "react-router-dom";
-import Login from "./views/Login/Login.jsx";
-import MainContainer from "./components/MainContainer/MainContainer";
-import Header from "./components/Header/Header";
-import SideMenu from "./components/SideMenu/SideMenu";
+import Login from "./views/Login/Login";
 import Dashboard from "./views/Dashboard/Dashboard";
-import Rooms from "./views/Rooms/Rooms";
 import Bookings from "./views/Bookings/Bookings";
+import Rooms from "./views/Rooms/Rooms";
 import Users from "./views/Users/Users";
-import Contact from "./views/Contact/Contact";
-
+import Contacts from "./views/Contacts/Contacts";
+import NotFound from "./views/NotFound/NotFound";
+import { LoginContext, initialState } from "./context/LoginContext";
+import { LoginReducer } from "./context/LoginReducer";
+import PrivateRoutes from "./utils/privateRoutes";
+import NewRoom from "./views/Rooms/NewRoom";
+import NewUser from "./views/Users/NewUser";
+import Booking from "./views/Bookings/Booking";
 
 function App() {
+  const contextValue = useReducer(LoginReducer, initialState);
 
-
-
-  const PrivateRoutes = () => {
-
-    const Auth_Routes = "authenticated";
-    return JSON.parse(localStorage.getItem(Auth_Routes)) !== null ? <Outlet /> : <Navigate to="/login" />;
-}
 
   return (
     <>
-      <BrowserRouter>
-        <Header />
-        <SideMenu />
-        <MainContainer className="renderContainer">
+      <LoginContext.Provider value={contextValue}>
+        <BrowserRouter >
           <Routes>
+            <Route element={<PrivateRoutes />} />
             <Route exact path="/login" element={<Login />} />
-            <Route element={<PrivateRoutes />}>
-              <Route exact path="/" element={<Navigate to='/dashboard' replace />} />
-              <Route exact path="/dashboard" element={<Dashboard />} />
-              <Route exact path="/rooms" element={<Rooms />} />
-              <Route exact path="/rooms/active" element={<Rooms />} />
-              <Route exact path="/rooms/inactive" element={<Rooms />} />
-              <Route exact path="/rooms/new-room" element={<Rooms />} />
-              <Route path="/bookings" element={<Bookings />} exact />
-              <Route exact path="/users" element={<Users />} />
-              <Route exact path="/users/active" element={<Users />} />
-              <Route exact path="/users/inactive" element={<Users />} />
-              <Route exact path="/users/new-user" element={<Users />} />
-              <Route exact path="/contact" element={<Contact />} />
-            </Route>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/bookings" element={<Bookings />} />
+            <Route path="/bookings/:id" element={<Booking />} />
+            <Route path="/rooms" element={<Rooms />} />
+            <Route path="/new-room" element={<NewRoom />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/new-user" element={<NewUser />} />
+            <Route path="/contact" element={<Contacts />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
-        </MainContainer>
-      </BrowserRouter>
+        </BrowserRouter>
+      </LoginContext.Provider>
     </>
   );
 }

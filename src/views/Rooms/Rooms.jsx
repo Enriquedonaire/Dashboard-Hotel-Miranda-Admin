@@ -1,106 +1,144 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { BsThreeDotsVertical } from "react-icons/bs";
-
-import {
-  Table,
-  Row,
-  TableTitle,
-  CheckboxContainer,
-  Checkbox,
-  Button,
-} from "../../components/TableBlocks/TableBlocks";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
-  NameContainer,
-  Image,
-  NameInfo,
-  Id,
-  Number,
-  RoomData,
-  Info,
-  Status,
-} from "./RoomsStyled";
+  fetchRooms,
+  selectRooms,
+  roomsStatus,
+} from "../../features/rooms/roomsSlice";
 
-import rooms from "../../db/rooms.json";
+import MainContainer from "../../components/MainContainer/MainContainer";
 
-console.log(rooms);
+import { Table, TableTitle } from "../../components/Blocks/TableBlocks";
+
+import {
+  ListButtonsContainer,
+  Selectors,
+  Selector,
+} from "../../components/Blocks/FilterButtons";
+
+import RoomsButtons from "../../components/Blocks/RoomsButtons";
+
+import RoomsRow from "../../components/Blocks/RoomsRow";
+import Spinner from "../../components/Blocks/Spinner";
+import Navigation from "../../components/Navigation/Navigation";
 
 const Rooms = () => {
+  const dispatch = useDispatch();
+  const roomsResult = useSelector(selectRooms);
+  const appState = useSelector(roomsStatus);
+
+  const [roomStatus, setRoomStatus] = useState("");
+  const [lengthFromRedux, setLengthFromRedux] = useState(true);
+  const [roomsFiltered, setRoomsFiltered] = useState([]);
+
+  const [itemsToShow, setItemsToShow] = useState(5);
+  const [pagesLength, setPagesLength] = useState(1);
+  const [initialIndex, setInitialIndex] = useState(5);
+
+  useEffect(() => {
+    dispatch(fetchRooms());
+  }, [dispatch]);
+
+  const setAllRooms = () => {
+    setLengthFromRedux(true);
+    dispatch(fetchRooms());
+  };
+
+  useEffect(() => {
+    const roomsToFilter = roomsResult;
+    const roomsFiltered = roomsToFilter.filter(
+      (room) => room.status === roomStatus
+    );
+    setRoomsFiltered(roomsFiltered);
+  }, [roomStatus, roomsResult]);
+
+  const roomsSwitch = () => {
+    if (lengthFromRedux) {
+      return roomsResult;
+    } else {
+      return roomsFiltered;
+    }
+  };
+
+  console.log('RR', roomsResult)
+  console.log('RS', roomsSwitch())
+
   return (
     <>
+      <MainContainer>
+        <ListButtonsContainer>
+          <Selectors>
+            <Selector
+              onClick={() => {
+                setAllRooms();
+              }}
+            >
+              All Rooms
+            </Selector>
+            <Selector
+              onClick={() => {
+                setRoomStatus(true);
+                setLengthFromRedux(false);
+              }}
+            >
+              Available
+            </Selector>
+            <Selector
+              onClick={() => {
+                setRoomStatus(false);
+                setLengthFromRedux(false);
+              }}
+            >
+              Booked
+            </Selector>
+          </Selectors>
+          <RoomsButtons />
+        </ListButtonsContainer>
         <Table>
           <thead>
             <tr>
-              <TableTitle style={{ paddingLeft: "10px" }}>
-                <Checkbox type="checkbox"></Checkbox>
-              </TableTitle>
               <TableTitle> Room Name </TableTitle>
               <TableTitle> Room Type </TableTitle>
-              <TableTitle> Amenities </TableTitle>
+              <TableTitle> Facilities </TableTitle>
               <TableTitle> Price </TableTitle>
               <TableTitle> Offer Price </TableTitle>
               <TableTitle> Status </TableTitle>
             </tr>
           </thead>
 
-          <tbody>
-            {rooms.map((room) => (
-              <Row key={room.id}>
-                <td style={{paddingLeft: '10px'}}>
-                  <CheckboxContainer>
-                    <Checkbox type="checkbox"></Checkbox>
-                  </CheckboxContainer>
+          {appState === "pending" && (
+            <tbody>
+              <tr>
+                <td>
+                  <Spinner />
                 </td>
+              </tr>
+            </tbody>
+          )}
 
-                <td>
-                  <NameContainer>
-                    <Image src={`/rooms/${room.id + 1}.jpg`} />
-                    <NameInfo>
-                      <Id># {room.id}</Id>
-                      <Number>Room: {room.room_number}</Number>
-                    </NameInfo>
-                  </NameContainer>
-                </td>
-                <td>
-                  <RoomData>
-                    <Info> {room.bed_type}</Info>
-                  </RoomData>
-                </td>
-                <td>
-                  <RoomData>
-                    <Info>
-                      {room.amenities.map((amenity, index) => (
-                        <span key={index}> {amenity}, </span>
-                      ))}
-                    </Info>
-                  </RoomData>
-                </td>
-                <td>
-                  <RoomData>
-                    <Info> € {room.price.toString()} /nigth </Info>
-                  </RoomData>
-                </td>
-                <td>
-                  <RoomData>
-                    <Info> € {room.offer.toString()} /nigth </Info>
-                  </RoomData>
-                </td>
-                <td>
-                  <Status $typeStatus={room.status}>
-                    {room.status ? "Available" : "Booked"}
-                  </Status>
-                </td>
-                <RoomData>
-                  <Button>
-                    {" "}
-                    <BsThreeDotsVertical />{" "}
-                  </Button>
-                </RoomData>
-              </Row>
-            ))}
-          </tbody>
+          {appState === "fulfilled" && (
+            <tbody>
+              {roomsSwitch().map((room, index) =>
+                index < initialIndex && index >= initialIndex - itemsToShow ? (
+                  <RoomsRow key={room._id} room={room} />
+                ) : (
+                  false
+                )
+              )}
+            </tbody>
+          )}
         </Table>
+
+        <Navigation
+          info={roomsSwitch()}
+          pagesLength={pagesLength}
+          setPagesLength={setPagesLength}
+          initialIndex={initialIndex}
+          setInitialIndex={setInitialIndex}
+        />
+      </MainContainer>
     </>
   );
 };

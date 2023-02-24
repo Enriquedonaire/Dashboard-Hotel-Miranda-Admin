@@ -11,6 +11,7 @@ import {
   Rigth,
 } from "./HeaderStyled";
 
+
 import { AiOutlineBell } from "react-icons/ai";
 import { FaRegEnvelope, FaArrowsAltH } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
@@ -50,10 +51,10 @@ const Header = () => {
       <Navbar>
         <Left>
           <Link to='/'><Logo src="/icons/logo2.png" /></Link>
-          <div>
+          {/* <div>
             <M>TRAVL</M>
             <P>Hotel Admin Dashboard</P>
-          </div>
+          </div> */}
           <FaArrowsAltH style={{ width: "22px", height: "30px" }} />
         </Left>
 

@@ -1,111 +1,155 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import guest from "../../db/guests.json";
-
-import { BsThreeDotsVertical } from "react-icons/bs";
-
-import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
-  Table,
-  Row,
-  TableTitle,
-  CheckboxContainer,
-  Checkbox,
-  Button,
-} from "../../components/TableBlocks/TableBlocks";
+  fetchBookings,
+  selectBookings,
+  bookingsStatus,
+} from "../../features/bookings/bookingsSlice";
+
+import MainContainer from "../../components/MainContainer/MainContainer";
 
 import {
-  GuestContainer,
-  Img,
-  Name,
-  Id,
-  DataContainer,
-  Text,
-  NotesButton,
-  Status,
-} from "./BookingsStyled";
+  ListButtonsContainer,
+  Selectors,
+  Selector,
+} from "../../components/Blocks/FilterButtons";
+
+import BookingButtons from "../../components/Blocks/BookingButtons";
+
+import { Table, TableTitle } from "../../components/Blocks/TableBlocks";
+
+import Spinner from "../../components/Blocks/Spinner";
+
+import BookingsRow from "../../components/Blocks/BookingsRow";
+
+import Navigation from "../../components/Navigation/Navigation";
 
 const Bookings = () => {
+  const dispatch = useDispatch();
+  const bookingsResult = useSelector(selectBookings);
+  const appState = useSelector(bookingsStatus);
 
-  const handleClick = (special_request) => {
-    if (special_request) {
-      Swal.fire({
-        title: `${special_request}`,
-        showClass: {
-          popup: 'animate__animated animate__fadeInDown'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__fadeOutUp'
-        }
-      })
+  const [bookingStatus, setBookingStatus] = useState("");
+  const [lengthFromRedux, setLengthFromRedux] = useState(true);
+  const [bookingsFiltered, setBookingsFiltered] = useState([]);
+
+
+  const [itemsToShow, setItemsToShow] = useState(5);
+  const [pagesLength, setPagesLength] = useState(1);
+  const [initialIndex, setInitialIndex] = useState(5);
+
+  useEffect(() => {
+    dispatch(fetchBookings());
+  }, [dispatch]);
+
+  const setAllBookings = () => {
+    setLengthFromRedux(true);
+    dispatch(fetchBookings());
+  };
+
+  useEffect(() => {
+    const bookingsToFilter = bookingsResult;
+    const bookingsFiltered = bookingsToFilter.filter(
+      (booking) => booking.state === bookingStatus
+    );
+    setBookingsFiltered(bookingsFiltered);
+  }, [bookingStatus, bookingsResult]);
+
+  const bookingsSwitch = () => {
+    if (lengthFromRedux) {
+      return bookingsResult;
+    } else {
+      return bookingsFiltered;
     }
-  }
+  };
 
-  console.log(guest);
+  console.log('BR', bookingsResult)
+  console.log('BS', bookingsSwitch())
+  console.log('TYPEOF BR', typeof(bookingsResult));
+
   return (
-    <Table>
-      <thead>
-        <tr>
-          <TableTitle style={{ paddingLeft: "10px" }}>
-            <Checkbox type="checkbox" />
-          </TableTitle>
-          <TableTitle>Guest</TableTitle>
-          <TableTitle>Order Date</TableTitle>
-          <TableTitle>Check In</TableTitle>
-          <TableTitle>Check Out</TableTitle>
-          <TableTitle>Special Request</TableTitle>
-          <TableTitle>Room Type</TableTitle>
-          <TableTitle>Status</TableTitle>
-        </tr>
-      </thead>
+    <MainContainer>
+      <ListButtonsContainer>
+        <Selectors>
+          <Selector
+            onClick={() => {
+              setAllBookings();
+            }}
+          >
+            All Bookings
+          </Selector>
+          <Selector
+            onClick={() => {
+              setBookingStatus("Check In");
+              setLengthFromRedux(false);
+            }}
+          >
+            Check In
+          </Selector>
+          <Selector
+            onClick={() => {
+              setBookingStatus("Check Out");
+              setLengthFromRedux(false);
+            }}
+          >
+            Check Out
+          </Selector>
+          <Selector
+            onClick={() => {
+              setBookingStatus("In Progress");
+              setLengthFromRedux(false);
+            }}
+          >
+            In Progress
+          </Selector>
+        </Selectors>
+        <BookingButtons select="01/11/2022 - 30/11/2022" />
+      </ListButtonsContainer>
+      <Table>
+        <thead>
+          <tr>
+            <TableTitle>Guest</TableTitle>
+            <TableTitle>Order Date</TableTitle>
+            <TableTitle>Check In</TableTitle>
+            <TableTitle>Check Out</TableTitle>
+            <TableTitle>Special Request</TableTitle>
+            <TableTitle>Room Type</TableTitle>
+            <TableTitle>Status</TableTitle>
+          </tr>
+        </thead>
 
-      <tbody>
-        {guest.map((guest) => (
-          <Row key={guest.id}>
-            <td style={{ paddingLeft: "10px" }}>
-              <CheckboxContainer className="checkBocContainer">
-                <Checkbox type="checkbox" />
-              </CheckboxContainer>
-            </td>
-            <td>
-              <GuestContainer>
-                <Img src={guest.image} alt="Guest Image" />
-                <div>
-                  <Name>{guest.full_name}</Name>
-                  <Id># {guest.id}</Id>
-                </div>
-              </GuestContainer>
-            </td>
-            <DataContainer>
-              <Text>{guest.order_date}</Text>
-            </DataContainer>
-            <DataContainer>
-              <Text>{guest.check_in}</Text>
-            </DataContainer>
-            <DataContainer>
-              <Text>{guest.check_out}</Text>
-            </DataContainer>
-            <td>
-              <NotesButton $special_request={guest.special_request} onClick={()=>handleClick(guest.special_request)}> View Notes </NotesButton>
-            </td>
-            <DataContainer>
-              <Text>
-                {guest.room_info.type} - {guest.room_info.number}
-              </Text>
-            </DataContainer>
-            <td>
-              <Status $typeStatus={guest.state}> {guest.state}</Status>
-            </td>
-            <DataContainer>
-              <Button>
-                <BsThreeDotsVertical />
-              </Button>
-            </DataContainer>
-          </Row>
-        ))}
-      </tbody>
-    </Table>
+        {appState === "pending" && (
+          <tbody>
+            <tr>
+              <td>
+                <Spinner />
+              </td>
+            </tr>
+          </tbody>
+        )}
+
+        {appState === "fulfilled" && (
+          <tbody>
+            {bookingsSwitch().map((booking, index) =>
+              index < initialIndex && index >= initialIndex - itemsToShow ? (
+                <BookingsRow key={booking._id} booking={booking} />
+              ) : (
+                false
+              )
+            )}
+          </tbody>
+        )}
+      </Table>
+      <Navigation
+        info={bookingsSwitch()}
+        pagesLength={pagesLength}
+        setPagesLength={setPagesLength}
+        initialIndex={initialIndex}
+        setInitialIndex={setInitialIndex}
+      />
+    </MainContainer>
   );
 };
 

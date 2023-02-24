@@ -1,13 +1,22 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-const UserDataName = styled.div`
+const UserDataName = styled.td`
   display: flex;
+  justify-content: flex-start;
   align-items: center;
 `;
 
 const UserInfo = styled.div`
+  width: 100%;
   padding: 0 1rem;
 `;
+
+const Image = styled.img`
+width: 80px;
+height: 80px;
+margin: .5rem 0;
+border-radius: 10px;
+`
 
 const UserName = styled.p`
   font-size: 1rem;
@@ -29,8 +38,8 @@ const UserDate = styled.p`
   color: var(--color-grey39);
 `;
 
-const UserData = styled.div`
-  width: 200px;
+const UserData = styled.td`
+  width: 220px;
 `;
 
 const DataContact = styled.div`
@@ -48,38 +57,9 @@ const DeleteIcon = styled.button`
   height: 25px;
 `;
 
-const CheckboxContainer = styled.div`
-  width: 20px;
-`;
-
-const Status = styled.p`
-  font-size: 14px;
-  font-weight: 600;
-  text-align: left;
-
-  ${(props) => {
-    switch (props.$typeStatus) {
-      case true:
-        return css`
-          color: var(--color-greenLight);
-          font-weight: 600;
-        `;
-      case false:
-        return css`
-          color: var(--color-red);
-          font-weight: 600;
-        `;
-      default:
-        return css`
-          color: var(--color-black);
-          font-weight: 600;
-        `;
-    }
-  }}
-`;
-
 export {
   UserDataName,
+  Image,
   UserInfo,
   UserName,
   UserId,
@@ -87,8 +67,5 @@ export {
   UserData,
   DataContact,
   ButtonContainer,
-  // Button,
   DeleteIcon,
-  CheckboxContainer,
-  Status,
 };

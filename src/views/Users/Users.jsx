@@ -1,109 +1,146 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import users from "../../db/users.json";
+import { useSelector, useDispatch } from "react-redux";
 
-import { HiOutlinePhone, HiOutlineMail } from "react-icons/hi";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import {
+  fetchUsers,
+  selectUsers,
+  selectState,
+} from "../../features/users/usersSlice";
+
+import MainContainer from "../../components/MainContainer/MainContainer";
+
+import {
+  ListButtonsContainer,
+  Selectors,
+  Selector,
+} from "../../components/Blocks/FilterButtons";
+
+import UsersButtons from "../../components/Blocks/UsersButtons";
 
 import {
   Table,
-  Row,
   TableTitle,
-  CheckboxContainer,
   Checkbox,
-  Button,
-} from "../../components/TableBlocks/TableBlocks";
+} from "../../components/Blocks/TableBlocks";
 
-import {
-  UserDataName,
-  UserInfo,
-  UserName,
-  UserId,
-  UserDate,
-  UserData,
-  DataContact,
-  Status,
-} from "./UsersStyled";
+import Spinner from "../../components/Blocks/Spinner";
+
+import UsersRow from "../../components/Blocks/UsersRow";
+import Navigation from "../../components/Navigation/Navigation";
 
 const Users = () => {
+  const dispatch = useDispatch();
+  const usersResult = useSelector(selectUsers);
+  const appState = useSelector(selectState);
+
+  const [userStatus, setUserStatus] = useState("");
+  const [lengthFromRedux, setLengthFromRedux] = useState(true);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [itemsToShow, setItemsToShow] = useState(5);
+  const [pagesLength, setPagesLength] = useState(1);
+  const [initialIndex, setInitialIndex] = useState(5);
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  const setAllUsers = () => {
+    setLengthFromRedux(true);
+    dispatch(fetchUsers());
+  };
+
+  useEffect(() => {
+    const usersToFilter = usersResult;
+    const usersFiltered = usersToFilter.filter(
+      (user) => user.status === userStatus
+    );
+    setFilteredUsers(usersFiltered);
+  }, [userStatus, usersResult]);
+
+  const usersSwitch = () => {
+    if (lengthFromRedux) {
+      return usersResult;
+    } else {
+      return filteredUsers;
+    }
+  };
+
   return (
     <>
-      <Table>
-        <thead>
-          <tr>
-            <TableTitle style={{ paddingLeft: "10px" }}>
-              <Checkbox type="checkbox"></Checkbox>
-            </TableTitle>
-            <TableTitle>Name</TableTitle>
-            <TableTitle>Job Desk</TableTitle>
-            <TableTitle>Contact</TableTitle>
-            <TableTitle>Status</TableTitle>
-            <TableTitle></TableTitle>
-          </tr>
-        </thead>
+      <MainContainer>
+        <ListButtonsContainer>
+          <Selectors>
+            <Selector
+              onClick={() => {
+                setAllUsers();
+              }}
+            >
+              {" "}
+              All Users{" "}
+            </Selector>
+            <Selector
+              onClick={() => {
+                setUserStatus(true);
+                setLengthFromRedux(false);
+              }}
+            >
+              Active Users
+            </Selector>
+            <Selector
+              onClick={() => {
+                setUserStatus(false);
+                setLengthFromRedux(false);
+              }}
+            >
+              Inactive Users
+            </Selector>
+          </Selectors>
+          <UsersButtons />
+        </ListButtonsContainer>
 
-        <tbody>
-          {users.map((user) => (
-            <Row>
-              <td style={{ paddingLeft: "10px" }}>
-                <CheckboxContainer>
-                  <Checkbox type="checkbox" />
-                </CheckboxContainer>
-              </td>
+        <Table>
+          <thead>
+            <tr>
+              <TableTitle>Name</TableTitle>
+              <TableTitle>Job Desk</TableTitle>
+              <TableTitle>Contact</TableTitle>
+              <TableTitle>Status</TableTitle>
+              <TableTitle></TableTitle>
+            </tr>
+          </thead>
 
-              <td>
-                <UserDataName>
-                  <img
-                    src={user.image}
-                    alt=""
-                    style={{ width: "80px", height: "80px" }}
-                  />
-                  <UserInfo>
-                    <UserName>{user.full_name} </UserName>
-                    <UserId># {user.id}</UserId>
-                    <UserDate>Joined on {user.start_date}</UserDate>
-                  </UserInfo>
-                </UserDataName>
-              </td>
+          {appState === "pending" && (
+            <tbody>
+              <tr>
+                <td>
+                  <Spinner />
+                </td>
+              </tr>
+            </tbody>
+          )}
 
-              <td>
-                <UserData>
-                  <p className="data__description">{user.description}</p>
-                </UserData>
-              </td>
+          {appState === "fulfilled" && (
+            <tbody>
+              {usersSwitch().map((user, index) =>
+                index < initialIndex && index >= initialIndex - itemsToShow ? (
+                  <UsersRow key={user._id} user={user} />
+                ) : (
+                  false
+                )
+              )}
+            </tbody>
+          )}
+        </Table>
 
-              <td>
-                <UserData style={{ width: "240px" }}>
-                  <DataContact>
-                    <HiOutlinePhone />
-                    <span>{user.contact}</span>
-                  </DataContact>
-                  <DataContact>
-                    <HiOutlineMail />
-                    <span>{user.email}</span>
-                  </DataContact>
-                </UserData>
-              </td>
-
-              <td>
-                <UserData>
-                  <Status $typeStatus={user.status}>
-                    {user.status ? "ACTIVE" : "INACTIVE"}
-                  </Status>
-                </UserData>
-              </td>
-
-              <td>
-                <UserData className="userData-container__button">
-                  <Button style={{margin: '0'}}>
-                    <BsThreeDotsVertical className="delete_icon" />
-                  </Button>
-                </UserData>
-              </td>
-            </Row>
-          ))}
-        </tbody>
-      </Table>
+        <Navigation
+          info={usersSwitch()}
+          pagesLength={pagesLength}
+          setPagesLength={setPagesLength}
+          initialIndex={initialIndex}
+          setInitialIndex={setInitialIndex}
+        />
+      </MainContainer>
     </>
   );
 };

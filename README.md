@@ -1,7 +1,9 @@
-#TRAVL Hotel Admin - Dashboard
+# TRAVL Hotel Admin - Dashboard
 <h2>Enrique Donaire</h2>
 
-#TECNOLOGIES:
+# TECNOLOGIES:
 - React
+- Redux-Toolkit
+- Redux-React
 - Styled-Components
 - Figma
