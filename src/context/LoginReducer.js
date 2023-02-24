@@ -5,7 +5,7 @@ export const LoginReducer = (state, { type, payload }) => {
     case LOGIN:
       return { ...state, ...payload };
     case LOGOUT:
-      return { ...state, ...payload };// no pasar nada
+      return {};
     case UPDATE_EMAIL:
       return {
         ...state,
